@@ -10,11 +10,17 @@ import SwiftUI
 @main
 struct Restart_AppApp: App {
     let persistenceController = PersistenceController.shared
+    @AppStorage("onboarding") var isOnboardingViewActivite: Bool = false
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            if isOnboardingViewActivite {
+                OnboardingView()
+                    .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            } else {
+                HomeView()
+                    .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            }
         }
     }
 }
