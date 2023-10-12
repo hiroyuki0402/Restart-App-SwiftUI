@@ -22,14 +22,44 @@ struct HomeView: View {
 
 
         VStack(spacing: 20) {
-            Text("HomeView")
-                .font(.largeTitle)
+            Spacer()
+
+            // MARK: - ヘッダー
+            ZStack {
+                CycleGroupView(ShapeColor: .gray, ShapeOpacity: 0.2)
+
+            Image(.character2)
+                .resizable()
+                .scaledToFit()
+                .padding()
+            }
+            // MARK: - センター
+
+            Text("習得にかかる時間は、我々の集中力の度合いに左右される。")
+                .font(.title3)
+                .fontWeight(.light)
+                .padding()
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+
+            // MARK: - フッター
+
 
             Button {
                 isOnboardingViewActivite = true
             } label: {
+                Image(systemName: "arrow.triangle.2.circlepath.doc.on.clipboard")
+                    .imageScale(.large)
+
                 Text("REStart")
+                    .font(.title3)
+                    .fontWeight(.bold)
+
             }
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.capsule)
+            .controlSize(.large)
+
 
         } //: VStack
     }
