@@ -15,6 +15,9 @@ struct OnboardingView: View {
     /// `false`の場合、ユーザーはまだオンボーディングを経験していない。
     @AppStorage("onboarding") var isOnboardingViewActivite: Bool = true
 
+    @State private var buttonWidht = UIScreen.main.bounds.width - 80
+    @State private var buttonOffset: CGFloat = 0
+
     // MARK: - ボディー
     var body: some View {
 
@@ -43,13 +46,7 @@ struct OnboardingView: View {
 
                 // MARK: -  キャラクターイメージのセクション
                 ZStack {
-                    Circle()
-                        .stroke(.white.opacity(0.2), lineWidth: 40)
-                        .frame(width: 240, height: 240, alignment: .center)
-
-                    Circle()
-                        .stroke(.white.opacity(0.2), lineWidth: 80)
-                        .frame(width: 260, height: 260, alignment: .center)
+                    CycleGroupView(ShapeColor: .white, ShapeOpacity: 0.4)
 
                     Image(.character1)
                         .resizable()
@@ -76,7 +73,7 @@ struct OnboardingView: View {
                     HStack {
                         Capsule()
                             .fill(.red)
-                            .frame(width: 80, height: 80)
+                            .frame(width: buttonOffset + 80)
                         Spacer()
                     }
 
@@ -86,7 +83,7 @@ struct OnboardingView: View {
                                 .fill(.red)
 
                             Capsule()
-                                .fill(.white.opacity(0.15))
+                                .fill(.black.opacity(0.15))
                                 .padding(8)
 
                             Image(systemName: "chevron.right.2")
@@ -94,14 +91,31 @@ struct OnboardingView: View {
                         }
                         .foregroundColor(.white)
                         .frame(width: 80, height: 80, alignment: .center)
-                        .onTapGesture {
-                            isOnboardingViewActivite = false
-                        }
+                        .offset(x: buttonOffset)
+                        .gesture(
+                            DragGesture()
+                                .onChanged { gesture in
+                                    let isTransion = gesture.translation.width > 0 && buttonOffset <= buttonWidht - 80
+                                    if isTransion {
+                                        buttonOffset = gesture.translation.width
+                                    }
+                                    print(gesture.location.x)
+                                }
+                                .onEnded { gesture in
+
+                                    if buttonOffset > buttonWidht / 2 {
+                                        buttonOffset = buttonWidht - 80
+                                        isOnboardingViewActivite = false
+                                    } else {
+                                        buttonOffset = 0
+                                    }
+                                }
+                        )
                         Spacer()
                     }
 
                 }
-                .frame(height: 80, alignment: .center)
+                .frame(width: buttonWidht,height: 80, alignment: .center)
                 .padding()
 
             }//: VStack
