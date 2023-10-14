@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 struct HomeView: View {
     // MARK: - プロパティー
@@ -15,7 +16,8 @@ struct HomeView: View {
     /// `false`の場合、ユーザーはまだオンボーディングを経験していません。
     @AppStorage("onboarding") var isOnboardingViewActivite: Bool = false
 
-
+    @State private var isAnimating: Bool = false
+    let feedBack = UINotificationFeedbackGenerator()
 
     // MARK: - ボディー
     var body: some View {
@@ -32,6 +34,13 @@ struct HomeView: View {
                 .resizable()
                 .scaledToFit()
                 .padding()
+                .offset(y: isAnimating ? 35: -100)
+                .animation(
+                    Animation
+                        .easeInOut(duration: 4)
+                        .repeatForever(),
+                        value: isAnimating
+                    )
             }
             // MARK: - センター
 
@@ -46,7 +55,11 @@ struct HomeView: View {
 
 
             Button {
-                isOnboardingViewActivite = true
+                withAnimation {
+                    feedBack.notificationOccurred(.success)
+                    playSound(sound: "success", type: "m4a")
+                    isOnboardingViewActivite = true
+                }
             } label: {
                 Image(systemName: "arrow.triangle.2.circlepath.doc.on.clipboard")
                     .imageScale(.large)
@@ -59,6 +72,11 @@ struct HomeView: View {
             .buttonStyle(.borderedProminent)
             .buttonBorderShape(.capsule)
             .controlSize(.large)
+            .onAppear(perform: {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+                    isAnimating = true
+                })
+            })
 
 
         } //: VStack
